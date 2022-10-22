@@ -8,6 +8,7 @@ class readdataset():
         print(dataset.shape)
         print(dataset.head(12))
 
+
     def view(self):
         #consultar dados dataset
         #apenas dá para ver duas tabelas de cada vez
