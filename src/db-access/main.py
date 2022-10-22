@@ -2,6 +2,7 @@ import psycopg2
 
 connection = None
 cursor = None
+#test commit
 
 try:
     connection = psycopg2.connect(user="is",
