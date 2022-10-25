@@ -9,7 +9,9 @@ string = "hello world"
 
 def readDataset():
     dataset = pd.read_csv("../master.csv")
+    print(dataset)
     return dataset
+
 print(f" > {server.string_reverse(string)}")
 print(f" > {server.string_length(string)}")
-print(f" >{server.readDataset()}")
+readDataset()
