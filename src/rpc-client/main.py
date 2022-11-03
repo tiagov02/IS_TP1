@@ -19,9 +19,5 @@ def writeToXML(dataset:pd):
 
 print(f" > {server.string_reverse(string)}")
 print(f" > {server.string_length(string)}")
-#dataset = readDataset()
-
-#print(len(dataset))
-#print(dataset.iterrows())
 writeToXML(readDataset())
 
