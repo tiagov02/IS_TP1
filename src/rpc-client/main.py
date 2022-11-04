@@ -11,13 +11,23 @@ def readDataset():
     dataset = pd.read_csv("../master.csv")
     print(dataset)
     return dataset
-def writeToXML(dataset:pd):
-    root = ET.Element("Suicides")
-    doc = ET.SubElement(root, "doc")
-    for ind in dataset.index:
-        print(dataset['country'][ind])
+def writeXML(dataset:pd):
+    root = ET.Element('SUICIDES')
+    for year , df_group in dataset.groupby('year'):
+        years = ET.Element('Year',{'code':year})
+        for country,df_group_country  in df_group.groupby('country'):
+            countys = ET.Element('country',{'name':country})
+
+
+
 
 print(f" > {server.string_reverse(string)}")
 print(f" > {server.string_length(string)}")
-writeToXML(readDataset())
+dataset = readDataset()
+writeXML(dataset)
+#writeToXML(dataset)
+
+#print(len(dataset))
+
+
 
