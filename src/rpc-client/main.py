@@ -15,11 +15,16 @@ def writeXML(dataset:pd):
     root = ET.Element('SUICIDES')
     for year , df_group in dataset.groupby('year'):
         years = ET.Element('Year',{'code':year})
+        for country,df_group_country  in df_group.groupby('country'):
+            countys = ET.Element('country',{'name':country})
+
+
 
 
 print(f" > {server.string_reverse(string)}")
 print(f" > {server.string_length(string)}")
 dataset = readDataset()
+writeXML(dataset)
 #writeToXML(dataset)
 
 #print(len(dataset))
