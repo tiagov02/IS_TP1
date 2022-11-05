@@ -14,14 +14,21 @@ def readDataset():
 def writeXML(dataset:pd):
     root = ET.Element('SUICIDES')
     for year , df_group in dataset.groupby('year'):
+        i:int =0
         print(year)
         years = ET.Element('Year',{'code':year})
-        for country  in df_group.groupby('country'):
-            print(country)
+        for country,df_group_country  in df_group.groupby('country'):
+            #print(country)
+            #print(df_group_country['country-year'])
             countys = ET.Element('country',{'name':country})
-            print()
-
-
+            #ver gravar varios countrys(append)
+            for item in df_group_country.iterrows():
+                i = i+1
+                #split
+                suicides = ET.Element('suicide',{'sex': item[i].T['sex'], 'suicides_no' : item[i].T['suicides_no'] ,
+                                                 'population': item[i].T['suicides_no']})
+                #item[1].T['year']
+                #print(item)
 
 
 
