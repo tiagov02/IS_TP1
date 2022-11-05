@@ -13,24 +13,38 @@ def readDataset():
     return dataset
 def writeXML(dataset:pd):
     root = ET.Element('SUICIDES')
+    aux = None
+    suicides = None
     for year , df_group in dataset.groupby('year'):
-        i:int =0
+        i=0
         print(year)
-        years = ET.Element('Year',{'code':year})
+        years = ET.SubElement(root,'Year',{'code':str(year)})
         for country,df_group_country  in df_group.groupby('country'):
             #print(country)
             #print(df_group_country['country-year'])
-            countys = ET.Element('country',{'name':country})
+            countys = ET.SubElement(years,'country',{'name':str(country)})
             #ver gravar varios countrys(append)
             for item in df_group_country.iterrows():
-                i = i+1
-                #split
-                suicides = ET.Element('suicide',{'sex': item[i].T['sex'], 'suicides_no' : item[i].T['suicides_no'] ,
-                                                 'population': item[i].T['suicides_no']})
-                #item[1].T['year']
-                #print(item)
-    tree = ET.ElementTree(years, countys, suicides)
-    tree.write("suicides.xml")
+                aux = item[1].T
+                minAge = None
+                maxAge = None
+                if(aux['age'] == "75+ years"):
+                    minAge = "75"
+                    maxAge= "MAX"
+                else:
+                    auxStr = str(aux['age']).split("-")
+                    auxMax = str(auxStr[1]).split()
+                    minAge = auxStr[0]
+                    maxAge = auxMax[0]
+                suicides = ET.SubElement(countys,'suicide',{'sex':str(aux['sex']),'minAge':str(minAge),'maxAge':str(maxAge),
+                                                            'tax':str(aux['suicides/100k pop']),'population_no':str(aux['population']),
+                                                            'suicides_no':str(aux['suicides_no']), 'generation':str(aux['generation']),
+                                                            'gdp_for_year':str(aux[' gdp_for_year ($) ']),'hdi_for_year':str(aux['HDI for year']),
+                                                            'gdp_per_capita':str(aux['gdp_per_capita ($)'])})
+                #
+    tree = ET.ElementTree(root)
+    with open('out.xml', 'w') as f:
+        tree.write(f, encoding='unicode')
 
 
 
