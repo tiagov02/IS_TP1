@@ -29,6 +29,8 @@ def writeXML(dataset:pd):
                                                  'population': item[i].T['suicides_no']})
                 #item[1].T['year']
                 #print(item)
+    tree = ET.ElementTree(years, countys, suicides)
+    tree.write("suicides.xml")
 
 
 
