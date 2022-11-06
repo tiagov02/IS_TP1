@@ -20,10 +20,7 @@ def writeXML(dataset:pd):
         print(year)
         years = ET.SubElement(root,'Year',{'code':str(year)})
         for country,df_group_country  in df_group.groupby('country'):
-            #print(country)
-            #print(df_group_country['country-year'])
             countys = ET.SubElement(years,'country',{'name':str(country)})
-            #ver gravar varios countrys(append)
             for item in df_group_country.iterrows():
                 aux = item[1].T
                 minAge = None
@@ -53,6 +50,9 @@ print(f" > {server.string_reverse(string)}")
 print(f" > {server.string_length(string)}")
 dataset = readDataset()
 writeXML(dataset)
+with open("out.xml", "rb") as handle:
+    binary_data = xmlrpc.client.Binary(handle.read())
+    server.server_receive_file(binary_data)
 #writeToXML(dataset)
 
 #print(len(dataset))
