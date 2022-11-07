@@ -52,10 +52,8 @@ dataset = readDataset()
 writeXML(dataset)
 with open("out.xml", "rb") as handle:
     binary_data = xmlrpc.client.Binary(handle.read())
-    server.server_receive_file(binary_data)
-#writeToXML(dataset)
+    server.receive_file(binary_data)
 
-#print(len(dataset))
 
 
 
