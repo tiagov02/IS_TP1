@@ -21,7 +21,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       sys.exit(0)
 
 
-   def server_receive_file(arg):
+   def receive_file(arg):
       with open("out.xml", "wb") as handle:
          handle.write(arg.data)
          return True
@@ -35,7 +35,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    # register both functions
    server.register_function(string_reverse)
    server.register_function(string_length)
-   server.register_function(server_receive_file)
+   server.register_function(receive_file)
 
    # start the server
    print("Starting the RPC Server...")
