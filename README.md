@@ -1,5 +1,11 @@
 # Systems Integration Development Kit #
 
+### WARNING ###
+BEFORE INSTALLING RUN THE COMMEND
+````
+docker compose build
+````
+This command allows the docker install the dependencies 
 ### Introduction ###
 
 This environment allows you to easily install the development environment and its dependencies.

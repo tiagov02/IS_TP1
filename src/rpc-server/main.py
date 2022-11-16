@@ -4,7 +4,7 @@ from xmlrpc.server import SimpleXMLRPCRequestHandler
 
 from functions.string_length import string_length
 from functions.string_reverse import string_reverse
-import pandas as pd
+from lxml import etree
 
 class RequestHandler(SimpleXMLRPCRequestHandler):
    rpc_paths = ('/RPC2',)
