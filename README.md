@@ -1,7 +1,7 @@
 # Systems Integration Development Kit #
 
 ### WARNING ###
-BEFORE INSTALLING RUN THE COMMEND
+BEFORE COMPILE(AND RUN THE PROJECT) RUN THE COMMAND:
 ````
 docker compose build
 ````

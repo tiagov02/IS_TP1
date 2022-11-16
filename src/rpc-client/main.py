@@ -69,9 +69,11 @@ print(f" > {server.string_reverse(string)}")
 print(f" > {server.string_length(string)}")
 dataset = readDataset()
 writeXML(dataset)
+resp = None
 with open("suicides.xml", "rb") as handle:
     binary_data = xmlrpc.client.Binary(handle.read())
-    server.receive_file(binary_data)
+    resp = server.receive_file(binary_data)
+print(resp)
 
 
 

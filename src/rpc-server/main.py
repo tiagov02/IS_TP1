@@ -21,10 +21,23 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       sys.exit(0)
 
 
+   def validateXSD(xml: str, xsd_path: str) -> bool:
+      xmlschema_doc = etree.parse(xsd_path)
+      xmlschema = etree.XMLSchema(xmlschema_doc)
+
+      xml_doc = etree.fromstring(xml)
+      result = xmlschema.validate(xml_doc)
+
+      return result
+
    def receive_file(arg):
-      with open("suicides.xml", "wb") as handle:
-         handle.write(arg.data)
-         return True
+      if(validateXSD(arg.data,'./suicidesXSD.xsd')):
+         with open("suicides.xml", "wb") as handle:
+            handle.write(arg.data)
+            return True
+      else:
+         return False
+
    # signals
    '''
    signal.signal(signal.SIGTERM, signal_handler)
