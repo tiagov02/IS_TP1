@@ -2,11 +2,29 @@ import xmlrpc.client
 import pandas as pd
 import xml.etree.cElementTree as ET
 
+from pip._vendor import requests
+
 print("connecting to server...")
 server = xmlrpc.client.ServerProxy('http://localhost:9000')
 
 string = "hello world"
+def generate_coords(region: str):
+    url = "https://nominatim.openstreetmap.org/"
 
+    params = {
+        'q': region,
+        'limit': '1',
+        'format': 'json'
+    }
+
+    r = requests.get(url=url, params=params)
+
+    data = r.json()
+
+    return [
+        data[0]["lat"],
+        data[0]["lon"]
+    ]
 def readDataset():
     dataset = pd.read_csv("../master.csv")
     print(dataset)
@@ -20,7 +38,8 @@ def writeXML(dataset:pd):
         print(year)
         years = ET.SubElement(root,'Year',{'code':str(year)})
         for country,df_group_country  in df_group.groupby('country'):
-            countys = ET.SubElement(years,'country',{'name':str(country)})
+            coords = generate_coords(country)
+            countys = ET.SubElement(years,'country',{'name':str(country), 'lat':str(coords[0]), 'lon':str(coords[1])})
             for item in df_group_country.iterrows():
                 aux = item[1].T
                 minAge = None
