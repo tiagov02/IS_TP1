@@ -58,7 +58,7 @@ def writeXML(dataset:pd):
                                                             'gdp_for_year':str(aux[' gdp_for_year ($) ']),'hdi_for_year':str(aux['HDI for year']),
                                                             'gdp_per_capita':str(aux['gdp_per_capita ($)'])})
     tree = ET.ElementTree(root)
-    with open('out.xml', 'w') as f:
+    with open('suicides.xml', 'w') as f:
         tree.write(f, encoding='unicode')
 
 

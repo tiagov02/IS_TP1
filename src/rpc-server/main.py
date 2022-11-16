@@ -22,7 +22,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
 
 
    def receive_file(arg):
-      with open("out.xml", "wb") as handle:
+      with open("suicides.xml", "wb") as handle:
          handle.write(arg.data)
          return True
    # signals
