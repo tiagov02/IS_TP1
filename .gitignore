@@ -49,3 +49,5 @@ Thumbs.db
 *.wmv
 
 /venv/
+/src/rpc-server/suicides.xml
+/src/rpc-client/suicides.xml
