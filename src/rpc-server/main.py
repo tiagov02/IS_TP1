@@ -96,11 +96,11 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
 
 
    # signals
-   '''
+
    signal.signal(signal.SIGTERM, signal_handler)
    signal.signal(signal.SIGHUP, signal_handler)
-   signal.signal(signal.SIGINT, signal_handler
-   '''
+   signal.signal(signal.SIGINT, signal_handler)
+
 
    # register both functions
    server.register_function(string_reverse)
