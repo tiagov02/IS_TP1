@@ -7,16 +7,12 @@ from functions.string_reverse import string_reverse
 from lxml import etree
 import psycopg2
 
+
 class RequestHandler(SimpleXMLRPCRequestHandler):
    rpc_paths = ('/RPC2',)
 
 with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as server:
    server.register_introspection_functions()
-
-   ####atribs######
-   connection = None
-   cursor = None
-   ##################
 
    def signal_handler(signum, frame):
       print("received signal")
@@ -40,7 +36,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       return result
 
    def receive_file(arg):
-      if(validateXSD(arg.data,'./suicidesXSD.xsd')):
+      if validateXSD(arg.data, './suicidesXSD.xsd'):
          with open("suicides.xml", "wb") as handle:
             saveToDb(arg.data)
             handle.write(arg.data)
@@ -70,26 +66,39 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       except (Exception, psycopg2.Error) as error:
          print("Failed to fetch data", error)
 
+
+
+   def saveToDb(xml:str):
+      try:
+         xml_file = etree.fromstring(xml)
+         s = etree.tostring(xml_file, encoding="utf8", method="xml").decode()
+         connection = psycopg2.connect(user="is",
+                                       password="is",
+                                       host="localhost",
+                                       port="5432",
+                                       database="is")
+
+         cursor = connection.cursor()
+         cursor.execute("INSERT INTO imported_documents (file_name, xml) VALUES(%s, %s)", ("nameXML", s))
+         connection.commit()
+      except (Exception, psycopg2.Error) as error:
+         print("Failed to fetch data", error)
       finally:
          if connection:
             cursor.close()
             connection.close()
 
-   def saveToDb(xml:str):
-      xml_file = etree.fromstring(xml)
-      s = etree.tostring(xml_file, encoding="utf8", method="xml").decode()
-      cursor = connection.cursor()
-      cursor.execute("INSERT INTO imported_documents (file_name, xml) VALUES(%s, %s)", ("nameXML", s))
-      connection.commit()
+
 
        #test save
 
 
    # signals
-
+   '''
    signal.signal(signal.SIGTERM, signal_handler)
    signal.signal(signal.SIGHUP, signal_handler)
-   signal.signal(signal.SIGINT, signal_handler)
+   signal.signal(signal.SIGINT, signal_handler
+   '''
 
    # register both functions
    server.register_function(string_reverse)

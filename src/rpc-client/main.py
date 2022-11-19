@@ -25,10 +25,14 @@ def generate_coords(region: str):
         data[0]["lat"],
         data[0]["lon"]
     ]
+
+
 def readDataset():
     dataset = pd.read_csv("../master.csv")
     print(dataset)
     return dataset
+
+
 def writeXML(dataset:pd):
     root = ET.Element('SUICIDES')
     aux = None
@@ -38,7 +42,8 @@ def writeXML(dataset:pd):
         print(year)
         years = ET.SubElement(root,'Year',{'code':str(year)})
         for country,df_group_country  in df_group.groupby('country'):
-            coords = generate_coords(country)
+            #coords = generate_coords(country)
+            coords=[1.1,1.2]
             countys = ET.SubElement(years,'country',{'name':str(country), 'lat':str(coords[0]), 'lon':str(coords[1])})
             for item in df_group_country.iterrows():
                 aux = item[1].T
@@ -58,6 +63,7 @@ def writeXML(dataset:pd):
                                                             'gdp_for_year':str(aux[' gdp_for_year ($) ']),'hdi_for_year':str(aux['HDI for year']),
                                                             'gdp_per_capita':str(aux['gdp_per_capita ($)'])})
     tree = ET.ElementTree(root)
+
     with open('suicides.xml', 'w') as f:
         tree.write(f, encoding='unicode')
 
