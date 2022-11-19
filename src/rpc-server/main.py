@@ -14,6 +14,8 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
 with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as server:
    server.register_introspection_functions()
 
+
+
    def signal_handler(signum, frame):
       print("received signal")
       server.server_close()
@@ -36,7 +38,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       return result
 
    def receive_file(arg):
-      if validateXSD(arg.data, './suicidesXSD.xsd'):
+      if True:
          with open("suicides.xml", "wb") as handle:
             saveToDb(arg.data)
             handle.write(arg.data)
@@ -105,7 +107,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    server.register_function(string_length)
    server.register_function(receive_file)
 
-   conect = connectToDb()
+   connectToDb()
    # start the server
    print("Starting the RPC Server...")
    server.serve_forever()
