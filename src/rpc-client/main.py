@@ -34,13 +34,13 @@ def readDataset():
 
 
 def writeXML(dataset:pd):
-    root = ET.Element('SUICIDES')
+    root = ET.Element('suicides')
     aux = None
     suicides = None
     for year , df_group in dataset.groupby('year'):
         i=0
         print(year)
-        years = ET.SubElement(root,'Year',{'code':str(year)})
+        years = ET.SubElement(root,'year',{'code':str(year)})
         for country,df_group_country  in df_group.groupby('country'):
             #coords = generate_coords(country)
             coords=[1.1,1.2]
