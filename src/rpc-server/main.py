@@ -21,6 +21,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       sys.exit(0)
 
 
+
    def validateXSD(xml: str, xsd_path: str) -> bool:
       xmlschema_doc = etree.parse(xsd_path)
       xmlschema = etree.XMLSchema(xmlschema_doc)
@@ -38,6 +39,9 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       else:
          return False
 
+   def connectToDb():
+      exec(open('../db-access/main.py').read())
+
    # signals
 
    signal.signal(signal.SIGTERM, signal_handler)
@@ -49,6 +53,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    server.register_function(string_length)
    server.register_function(receive_file)
 
+   connectToDb()
    # start the server
    print("Starting the RPC Server...")
    server.serve_forever()
