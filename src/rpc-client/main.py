@@ -1,3 +1,18 @@
+class Coordinates:
+    def __init__(self, country: object, lat: object, lon: object) -> object:
+        self.country = country
+        self.lat = lat
+        self.lon = lon
+
+    def getCountry(self):
+        return self.country
+
+    def getLat(self):
+        return self.lat
+
+    def getLon(self):
+        return self.lon
+
 import xmlrpc.client
 import pandas as pd
 import xml.etree.cElementTree as ET
@@ -37,13 +52,31 @@ def writeXML(dataset:pd):
     root = ET.Element('suicides')
     aux = None
     suicides = None
+    coordinates = []
+    find_country: bool = False
     for year , df_group in dataset.groupby('year'):
         i=0
         print(year)
         years = ET.SubElement(root,'year',{'code':str(year)})
         for country,df_group_country  in df_group.groupby('country'):
-            coords = generate_coords(country)
-            countys = ET.SubElement(years,'country',{'name':str(country), 'lat':str(coords[0]), 'lon':str(coords[1])})
+            if len(coordinates) == 0:
+                coords = generate_coords(country)
+                countys = ET.SubElement(years, 'country',
+                                        {'name': str(country), 'lat': str(coords[0]), 'lon': str(coords[1])})
+                c = Coordinates(country,coords[0],coords[1])
+                coordinates.append(c)
+            else:
+                for c in coordinates:
+                    if c.getCountry() == country:
+                        countys = ET.SubElement(years, 'country',
+                                                {'name': str(country), 'lat': str(c.getLat()), 'lon': str(c.getLon())})
+                        find_country = True
+                if not find_country:
+                    coords = generate_coords(country)
+                    countys = ET.SubElement(years, 'country',
+                                            {'name': str(country), 'lat': str(coords[0]), 'lon': str(coords[1])})
+                    c = Coordinates(country, coords[0], coords[1])
+                    coordinates.append(c)
             for item in df_group_country.iterrows():
                 aux = item[1].T
                 minAge = None
@@ -91,6 +124,9 @@ with open("suicides.xml", "rb") as handle:
     binary_data = xmlrpc.client.Binary(handle.read())
     resp = server.receive_file(binary_data)
 print(resp)
+
+
+
 
 
 
