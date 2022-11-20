@@ -75,14 +75,30 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
          res = connectToDb()
          connection = res[0]
          cursor = res[1]
-         cursor.execute("SELECT xpath(/suicides/year[code='"+year+"']/country/suicides/text()")
+         cursor.execute("SELECT xpath(/suicides/year[code='"+year+"']/country/suicides/text(),xml) from imported_documents")
          for sdata in cursor:
             print(sdata)
       except (Exception, psycopg2.Error) as error:
          print("Failed to fetch data", error)
+      finally:
+         if connection:
+            cursor.close()
+            connection.close()
 
-   def orderByCountry():
-      return
+   def orderByCountry(country:str):
+      try:
+         res = connectToDb()
+         connection = res[0]
+         cursor = res[1]
+         cursor.execute("SELECT xpath(/suicides/year/country[name='"+country+"']/suicides/text(),xml) from imported_documents")
+         for sdata in cursor:
+            print(sdata)
+      except (Exception, psycopg2.Error) as error:
+         print("Failed to fetch data", error)
+      finally:
+         if connection:
+            cursor.close()
+            connection.close()
    def orderByGdpPerCapita():
       return
    def childrensWhoCommitedSuicide():
