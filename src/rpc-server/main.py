@@ -70,8 +70,17 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
             connection.close()
 
    # XPATH AND XQUERY
-   def orderByYear():
-      return
+   def orderByYear(year:str):
+      try:
+         res = connectToDb()
+         connection = res[0]
+         cursor = res[1]
+         cursor.execute("SELECT xpath(/suicides/year[code='"+year+"']/country/suicides/text()")
+         for sdata in cursor:
+            print(sdata)
+      except (Exception, psycopg2.Error) as error:
+         print("Failed to fetch data", error)
+
    def orderByCountry():
       return
    def orderByGdpPerCapita():
@@ -80,7 +89,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       return
    def oldersWhoCommitedSuicide():
       return
-   #
+   #####
 
    def menu(option:str, data):
       if option == 1:
