@@ -69,6 +69,23 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
             cursor.close()
             connection.close()
 
+   # XPATH AND XQUERY
+   def orderByYear():
+      return
+   def orderByCountry():
+      return
+   def orderByGdpPerCapita():
+      return
+   def childrensWhoCommitedSuicide():
+      return
+   def oldersWhoCommitedSuicide():
+      return
+   #
+
+   def menu(option:str, data):
+      if option == 1:
+         a = 0
+
 
    # signals
 

@@ -66,6 +66,18 @@ def writeXML(dataset:pd):
     with open('suicides.xml', 'w') as f:
         tree.write(f, encoding='unicode')
 
+def menu():
+    print("##############SYSTEMS INTEGRATION##################")
+    print("########José Viana, Luís Malheiro@ESTG-IPVC########")
+    print("1 -\tPer Year")
+    print("2 -\tPer Country")
+    print("3 -\tWhere GDP per capita is bigger then 18577(Portugal in 2012)")
+    print("4 -\t In Children(Age less then 15)")
+    print("6 -\t In Olders(Age bigger then 75)")
+    option = input("\tEnter your option")
+    if option == '1' or option =='2':
+        data = input("\tEnter the value that you wanna search")
+
 
 
 
