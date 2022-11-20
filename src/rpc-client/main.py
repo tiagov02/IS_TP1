@@ -42,8 +42,7 @@ def writeXML(dataset:pd):
         print(year)
         years = ET.SubElement(root,'year',{'code':str(year)})
         for country,df_group_country  in df_group.groupby('country'):
-            #coords = generate_coords(country)
-            coords=[1.1,1.2]
+            coords = generate_coords(country)
             countys = ET.SubElement(years,'country',{'name':str(country), 'lat':str(coords[0]), 'lon':str(coords[1])})
             for item in df_group_country.iterrows():
                 aux = item[1].T
