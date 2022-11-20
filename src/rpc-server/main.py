@@ -38,7 +38,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       return result
 
    def receive_file(arg):
-      if True:
+      if validateXSD(arg.data,"suicidesXSD.xsd"):
          with open("suicides.xml", "wb") as handle:
             saveToDb(arg.data)
             handle.write(arg.data)
