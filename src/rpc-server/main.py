@@ -15,6 +15,16 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    server.register_introspection_functions()
 
 
+   def connectToDb():
+      connection = psycopg2.connect(user="is",
+                                    password="is",
+                                    host="localhost",
+                                    port="5432",
+                                    database="is")
+
+      cursor = connection.cursor()
+      cursor.execute("SELECT * FROM teachers")
+      return [connection,cursor]
 
    def signal_handler(signum, frame):
       print("received signal")
@@ -24,9 +34,6 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
 
       print("exiting, gracefully")
       sys.exit(0)
-
-
-
 
    def validateXSD(xml: str, xsd_path: str) -> bool:
       xmlschema_doc = etree.parse(xsd_path)
@@ -46,42 +53,14 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       else:
          return False
 
-#Funções da base de dados
-   def connectToDb():
-
-      # test commit
-
-      try:
-         connection = psycopg2.connect(user="is",
-                                       password="is",
-                                       host="localhost",
-                                       port="5432",
-                                       database="is")
-
-         cursor = connection.cursor()
-         cursor.execute("SELECT * FROM teachers")
-
-         print("Teachers list:")
-         for teacher in cursor:
-            print(f" > {teacher[0]}, from {teacher[1]}")
-
-      except (Exception, psycopg2.Error) as error:
-         print("Failed to fetch data", error)
-
-
-
    def saveToDb(xml:str):
       try:
          xml_file = etree.fromstring(xml)
          s = etree.tostring(xml_file, encoding="utf8", method="xml").decode()
-         connection = psycopg2.connect(user="is",
-                                       password="is",
-                                       host="localhost",
-                                       port="5432",
-                                       database="is")
-
-         cursor = connection.cursor()
-         cursor.execute("INSERT INTO imported_documents (file_name, xml) VALUES(%s, %s)", ("nameXML", s))
+         res = connectToDb()
+         cursor = res[0]
+         connection = res[1]
+         cursor.execute("INSERT INTO imported_documents (file_name, xml) VALUES(%s, %s)", ("suicides.xml", s))
          connection.commit()
       except (Exception, psycopg2.Error) as error:
          print("Failed to fetch data", error)
@@ -89,10 +68,6 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
          if connection:
             cursor.close()
             connection.close()
-
-
-
-       #test save
 
 
    # signals
@@ -107,7 +82,6 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    server.register_function(string_length)
    server.register_function(receive_file)
 
-   connectToDb()
    # start the server
    print("Starting the RPC Server...")
    server.serve_forever()
