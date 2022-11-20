@@ -49,31 +49,32 @@ def readDataset():
 
 
 def writeXML(dataset:pd):
-    root = ET.Element('suicides')
+    root = ET.Element('SUICIDES')
     aux = None
     suicides = None
+    i = 1
     coordinates = []
     find_country: bool = False
     for year , df_group in dataset.groupby('year'):
         i=0
         print(year)
-        years = ET.SubElement(root,'year',{'code':str(year)})
+        years = ET.SubElement(root,'YEAR',{'code':str(year)})
         for country,df_group_country  in df_group.groupby('country'):
             if len(coordinates) == 0:
                 coords = generate_coords(country)
-                countys = ET.SubElement(years, 'country',
+                countys = ET.SubElement(years, 'COUNTRY',
                                         {'name': str(country), 'lat': str(coords[0]), 'lon': str(coords[1])})
                 c = Coordinates(country,coords[0],coords[1])
                 coordinates.append(c)
             else:
                 for c in coordinates:
                     if c.getCountry() == country:
-                        countys = ET.SubElement(years, 'country',
+                        countys = ET.SubElement(years, 'COUNTRY',
                                                 {'name': str(country), 'lat': str(c.getLat()), 'lon': str(c.getLon())})
                         find_country = True
                 if not find_country:
                     coords = generate_coords(country)
-                    countys = ET.SubElement(years, 'country',
+                    countys = ET.SubElement(years, 'COUNTRY',
                                             {'name': str(country), 'lat': str(coords[0]), 'lon': str(coords[1])})
                     c = Coordinates(country, coords[0], coords[1])
                     coordinates.append(c)
@@ -89,7 +90,7 @@ def writeXML(dataset:pd):
                     auxMax = str(auxStr[1]).split()
                     minAge = auxStr[0]
                     maxAge = auxMax[0]
-                suicides = ET.SubElement(countys,'suicide',{'sex':str(aux['sex']),'minAge':str(minAge),'maxAge':str(maxAge),
+                suicides = ET.SubElement(countys,'SUICIDE',{'sex':str(aux['sex']),'minAge':str(minAge),'maxAge':str(maxAge),
                                                             'tax':str(aux['suicides/100k pop']),'population_no':str(aux['population']),
                                                             'suicides_no':str(aux['suicides_no']), 'generation':str(aux['generation']),
                                                             'gdp_for_year':str(aux[' gdp_for_year ($) ']),'hdi_for_year':str(aux['HDI for year']),

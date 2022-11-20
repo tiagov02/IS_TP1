@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid Technologies Online Tools 1.0 (https://www.liquid-technologies.com) -->
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="suicides">
+  <xs:element name="SUICIDES">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="year">
+        <xs:element maxOccurs="unbounded" name='YEAR'>
           <xs:complexType>
             <xs:sequence>
-              <xs:element maxOccurs="unbounded" name="country">
+              <xs:element maxOccurs="unbounded" name='COUNTRY'>
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element maxOccurs="unbounded" name="suicide">
+                    <xs:element maxOccurs="unbounded" name='SUICIDE'>
                       <xs:complexType>
                         <xs:attribute name="sex" type="xs:string" use="required" />
                         <xs:attribute name="minAge" type="xs:integer" use="required" />
                         <xs:attribute name="maxAge" type="xs:string" use="required" />
                         <xs:attribute name="tax" type="xs:decimal" use="required" />
                         <xs:attribute name="population_no" type="xs:integer" use="required" />
-                        <xs:attribute name="suicides_no" type="xs:unsignedShort" use="required" />
+                        <xs:attribute name="suicides_no" type="xs:integer" use="required" />
                         <xs:attribute name="generation" type="xs:string" use="required" />
                         <xs:attribute name="gdp_for_year" type="xs:string" use="required" />
                         <xs:attribute name="hdi_for_year" type="xs:string" use="required" />
-                        <xs:attribute name="gdp_per_capita" type="xs:unsignedShort" use="required" />
+                        <xs:attribute name="gdp_per_capita" type="xs:decimal" use="required" />
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
@@ -30,7 +31,7 @@
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
-            <xs:attribute name="code" type="xs:unsignedShort" use="required" />
+            <xs:attribute name="code" type="xs:integer" use="required" />
           </xs:complexType>
         </xs:element>
       </xs:sequence>
