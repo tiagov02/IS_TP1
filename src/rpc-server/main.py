@@ -1,4 +1,5 @@
 import signal, sys
+
 from xmlrpc.server import SimpleXMLRPCServer
 from xmlrpc.server import SimpleXMLRPCRequestHandler
 
@@ -108,8 +109,16 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    #####
 
    def menu(option:str, data):
-      if option == 1:
-         a = 0
+      if option == '1':
+         orderByYear(data)
+      elif option == '2':
+         orderByCountry(data)
+      elif option == '3':
+         orderByGdpPerCapita()
+      elif option == '4':
+         childrensWhoCommitedSuicide()
+      elif option == '5':
+         oldersWhoCommitedSuicide()
 
 
    # signals
@@ -123,6 +132,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    server.register_function(string_reverse)
    server.register_function(string_length)
    server.register_function(receive_file)
+   server.register_function(menu)
 
    # start the server
    print("Starting the RPC Server...")

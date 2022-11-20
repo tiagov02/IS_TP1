@@ -111,6 +111,9 @@ def menu():
     option = input("\tEnter your option")
     if option == '1' or option =='2':
         data = input("\tEnter the value that you wanna search")
+        server.menu(option,data)
+    else:
+        server.menu(option,None)
 
 
 
