@@ -12,10 +12,10 @@
                     <xs:element maxOccurs="unbounded" name="suicide">
                       <xs:complexType>
                         <xs:attribute name="sex" type="xs:string" use="required" />
-                        <xs:attribute name="minAge" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="minAge" type="xs:integer" use="required" />
                         <xs:attribute name="maxAge" type="xs:string" use="required" />
                         <xs:attribute name="tax" type="xs:decimal" use="required" />
-                        <xs:attribute name="population_no" type="xs:unsignedInt" use="required" />
+                        <xs:attribute name="population_no" type="xs:integer" use="required" />
                         <xs:attribute name="suicides_no" type="xs:unsignedShort" use="required" />
                         <xs:attribute name="generation" type="xs:string" use="required" />
                         <xs:attribute name="gdp_for_year" type="xs:string" use="required" />
