@@ -85,8 +85,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
            if connection:
                cursor.close()
                connection.close()
-           if cursor :
-               return cursor
+           return res
 
    def orderByCountryAndYear(year:str,country:str):
       try:
