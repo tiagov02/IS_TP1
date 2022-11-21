@@ -105,8 +105,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
          if connection:
             cursor.close()
             connection.close()
-   def orderByGdpPerCapita():
-      return
+
    def childrensWhoCommitedSuicide():
       return
    def oldersWhoCommitedSuicide():
