@@ -113,15 +113,14 @@ def menu():
     option = input("\tEnter your option")
     if option == '1':
         year = input("\tEnter the year that you wanna search")
-        server.orderByYear(year)
+        presentResult(server.orderByYear(year))
     else:
         if option == '2':
             year = input("\tEnter the year that you wanna search")
             country = input("\tEnter the cuntry that you wanna search")
-            res = server.menu(option, year,country)
         else:
-            res = server.menu(option,"0","0")
-    presentResult(res)
+            return
+
 
 def presentResult(res):
     for data in res:

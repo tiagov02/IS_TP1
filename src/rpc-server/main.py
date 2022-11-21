@@ -75,7 +75,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
 
            cursor = connection.cursor()
            print(year)
-           res = cursor.execute(
+           cursor.execute(
                f"with suicides as ( select unnest ( xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE', xml)) as suicide from imported_documents where file_name='suicides2.xml') SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) as count FROM suicides GROUP BY (xpath('@sex', suicide))[1]::text")
            for data in cursor:
                res.append(data)
