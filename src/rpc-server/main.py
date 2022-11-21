@@ -65,23 +65,27 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
 
    # XPATH AND XQUERY
    def orderByYear(year:str):
-      try:
-         connection = psycopg2.connect(user="is",
-                                       password="is",
-                                       host="localhost",
-                                       port="5432",
-                                       database="is")
+       cursor = None
+       try:
+           connection = psycopg2.connect(user="is",
+                                         password="is",
+                                         host="localhost",
+                                         port="5432",
+                                         database="is")
 
-         cursor = connection.cursor()
-         cursor.execute(f"SELECT xpath(/suicides/year[code=\"{year}\"]/country/suicides/text(),xml) from imported_documents")
-         for sdata in cursor:
-            print(sdata)
-      except (Exception, psycopg2.Error) as error:
-         print("Failed to fetch data", error)
-      finally:
-         if connection:
-            cursor.close()
-            connection.close()
+           cursor = connection.cursor()
+           cursor.execute(
+               f"with suicides as ( select unnest ( xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE', xml)) as suicide from imported_documents where file_name='suicides2.xml') SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) as count FROM suicides GROUP BY (xpath('@sex', suicide))[1]::text")
+           for sdata in cursor:
+               print(sdata)
+       except (Exception, psycopg2.Error) as error:
+           print("Failed to fetch data", error)
+       finally:
+           if connection:
+               cursor.close()
+               connection.close()
+           if cursor :
+               return cursor
 
    def orderByCountryAndYear(year:str,country:str):
       try:
@@ -111,7 +115,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
 
    def menu(option:str, year,country):
       if option == '1':
-         orderByYear(year)
+         return orderByYear(year)
       elif option == '2':
          orderByCountryAndYear(year,country)
       elif option == '3':

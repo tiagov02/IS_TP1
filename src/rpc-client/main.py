@@ -16,6 +16,7 @@ class Coordinates:
 import xmlrpc.client
 import pandas as pd
 import xml.etree.cElementTree as ET
+import psycopg2
 
 from pip._vendor import requests
 
@@ -112,18 +113,20 @@ def menu():
     option = input("\tEnter your option")
     if option == '1':
         year = input("\tEnter the year that you wanna search")
-        res = server.menu(option,year,None)
+        res = server.menu(option,year,0)
     else:
         if option == '2':
             year = input("\tEnter the year that you wanna search")
             country = input("\tEnter the cuntry that you wanna search")
             res = server.menu(option, year,country)
         else:
-            res = server.menu(option,None,None)
+            res = server.menu(option,0,0)
     presentResult(res)
 
-def presentResult(res):
-    return
+def presentResult(res:psycopg2.extensions.cursor):
+    print(res)
+    #for data in res:
+    #    print(" "+data[0]+" , "+ data[1])
 
 
 
@@ -137,6 +140,7 @@ with open("suicides.xml", "rb") as handle:
     binary_data = xmlrpc.client.Binary(handle.read())
     resp = server.receive_file(binary_data)
 print(resp)
+menu()
 
 
 
