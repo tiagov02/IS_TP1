@@ -113,20 +113,19 @@ def menu():
     option = input("\tEnter your option")
     if option == '1':
         year = input("\tEnter the year that you wanna search")
-        res = server.menu(option,year,0)
+        server.orderByYear(year)
     else:
         if option == '2':
             year = input("\tEnter the year that you wanna search")
             country = input("\tEnter the cuntry that you wanna search")
             res = server.menu(option, year,country)
         else:
-            res = server.menu(option,0,0)
+            res = server.menu(option,"0","0")
     presentResult(res)
 
 def presentResult(res):
-    print(res)
-    #for data in res:
-    #    print(" "+data[0]+" , "+ data[1])
+    for data in res:
+        print(f"SEX: {data[0]} AND NO: {data[1]}")
 
 
 
