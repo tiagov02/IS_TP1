@@ -83,7 +83,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
             cursor.close()
             connection.close()
 
-   def orderByCountry(country:str):
+   def orderByCountryAndYear(year:str,country:str):
       try:
          connection = psycopg2.connect(user="is",
                                        password="is",
@@ -109,11 +109,11 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       return
    #####
 
-   def menu(option:str, data):
+   def menu(option:str, year,country):
       if option == '1':
-         orderByYear(data)
+         orderByYear(year)
       elif option == '2':
-         orderByCountry(data)
+         orderByCountryAndYear(year,country)
       elif option == '3':
          orderByGdpPerCapita()
       elif option == '4':

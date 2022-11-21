@@ -101,20 +101,29 @@ def writeXML(dataset:pd):
         tree.write(f, encoding='unicode')
 
 def menu():
+    res = None
     print("##############SYSTEMS INTEGRATION##################")
     print("########José Viana, Luís Malheiro@ESTG-IPVC########")
     print("1 -\tPer Year")
-    print("2 -\tPer Country")
+    print("2 -\tPer Country and year")
     print("3 -\tWhere GDP per capita is bigger then 18577(Portugal in 2012)")
     print("4 -\t In Children(Age less then 15)")
     print("6 -\t In Olders(Age bigger then 75)")
     option = input("\tEnter your option")
-    if option == '1' or option =='2':
-        data = input("\tEnter the value that you wanna search")
-        server.menu(option,data)
+    if option == '1':
+        year = input("\tEnter the year that you wanna search")
+        res = server.menu(option,year,None)
     else:
-        server.menu(option,None)
+        if option == '2':
+            year = input("\tEnter the year that you wanna search")
+            country = input("\tEnter the cuntry that you wanna search")
+            res = server.menu(option, year,country)
+        else:
+            res = server.menu(option,None,None)
+    presentResult(res)
 
+def presentResult(res):
+    return
 
 
 
