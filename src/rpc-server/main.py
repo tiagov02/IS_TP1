@@ -65,7 +65,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
 
    # XPATH AND XQUERY
    def orderByYear(year:str):
-       cursor = None
+       res = None
        try:
            connection = psycopg2.connect(user="is",
                                          password="is",
@@ -74,10 +74,11 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
                                          database="is")
 
            cursor = connection.cursor()
-           cursor.execute(
+           print(year)
+           res = cursor.execute(
                f"with suicides as ( select unnest ( xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE', xml)) as suicide from imported_documents where file_name='suicides2.xml') SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) as count FROM suicides GROUP BY (xpath('@sex', suicide))[1]::text")
-           for sdata in cursor:
-               print(sdata)
+           for data in cursor:
+               print(f"SEX: {data[0]}, NS: {data[1]}")
        except (Exception, psycopg2.Error) as error:
            print("Failed to fetch data", error)
        finally:

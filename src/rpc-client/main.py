@@ -123,7 +123,7 @@ def menu():
             res = server.menu(option,0,0)
     presentResult(res)
 
-def presentResult(res:psycopg2.extensions.cursor):
+def presentResult(res):
     print(res)
     #for data in res:
     #    print(" "+data[0]+" , "+ data[1])
