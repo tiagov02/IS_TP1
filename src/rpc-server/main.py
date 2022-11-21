@@ -16,17 +16,6 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    server.register_introspection_functions()
 
 
-   def connectToDb():
-      connection = psycopg2.connect(user="is",
-                                    password="is",
-                                    host="localhost",
-                                    port="5432",
-                                    database="is")
-
-      cursor = connection.cursor()
-      cursor.execute("SELECT * FROM teachers")
-      return [connection,cursor]
-
    def signal_handler(signum, frame):
       print("received signal")
       server.server_close()
@@ -58,10 +47,14 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
       try:
          xml_file = etree.fromstring(xml)
          s = etree.tostring(xml_file, encoding="utf8", method="xml").decode()
-         res = connectToDb()
-         cursor = res[0]
-         connection = res[1]
-         cursor.execute("INSERT INTO imported_documents (file_name, xml) VALUES(%s, %s)", ("suicides.xml", s))
+         connection = psycopg2.connect(user="is",
+                                       password="is",
+                                       host="localhost",
+                                       port="5432",
+                                       database="is")
+
+         cursor = connection.cursor()
+         cursor.execute("INSERT INTO imported_documents (file_name, xml) VALUES(%s, %s)", ("suicides2.xml", s))
          connection.commit()
       except (Exception, psycopg2.Error) as error:
          print("Failed to fetch data", error)
@@ -73,10 +66,14 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    # XPATH AND XQUERY
    def orderByYear(year:str):
       try:
-         res = connectToDb()
-         connection = res[0]
-         cursor = res[1]
-         cursor.execute("SELECT xpath(/suicides/year[code='"+year+"']/country/suicides/text(),xml) from imported_documents")
+         connection = psycopg2.connect(user="is",
+                                       password="is",
+                                       host="localhost",
+                                       port="5432",
+                                       database="is")
+
+         cursor = connection.cursor()
+         cursor.execute(f"SELECT xpath(/suicides/year[code=\"{year}\"]/country/suicides/text(),xml) from imported_documents")
          for sdata in cursor:
             print(sdata)
       except (Exception, psycopg2.Error) as error:
@@ -88,9 +85,13 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
 
    def orderByCountry(country:str):
       try:
-         res = connectToDb()
-         connection = res[0]
-         cursor = res[1]
+         connection = psycopg2.connect(user="is",
+                                       password="is",
+                                       host="localhost",
+                                       port="5432",
+                                       database="is")
+
+         cursor = connection.cursor()
          cursor.execute("SELECT xpath(/suicides/year/country[name='"+country+"']/suicides/text(),xml) from imported_documents")
          for sdata in cursor:
             print(sdata)
