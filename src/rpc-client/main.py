@@ -101,53 +101,82 @@ def writeXML(dataset:pd):
     with open('suicides.xml', 'w') as f:
         tree.write(f, encoding='unicode')
 
+
 def menu():
-    res = None
-    print("##############SYSTEMS INTEGRATION##################")
-    print("########José Viana, Luís Malheiro@ESTG-IPVC########")
-    print("1 -\tPer Year")
-    print("2 -\tPer Country")
-    print("3 -\tPer Country and year")
-    print("4 -\t Where GDP per capita is bigger then 18577(Portugal in 2012)- By Sex")
-    print("5 -\t Defining...")
-    option = input("\tEnter your option:\n")
-    if option == '1':
-        year = input("\tEnter the year that you wanna search:\n")
-        presentResult(server.orderByYear(year),f"suicides_per_year_{year}")
-    elif option =='2':
-        country = input("\tEnter the cuntry that you wanna search:\n")
-        presentResult(server.orderByCountry(country),f"suicides_per_country_{country}")
-    elif option =='3':
-        year = input("\tEnter the year that you wanna search:\n")
-        country = input("\tEnter the cuntry that you wanna search\n")
-        presentResult(server.orderByYarAndCountry(year,country),f"suicides_per_country_{country}_year_{year}")
-    elif option == '4':
-        presentSimpleResult(server.suicidesInRichCountry())
+    while True:
+        print("##############SYSTEMS INTEGRATION##################")
+        print("########José Viana, Luís Malheiro@ESTG-IPVC########")
+        print("0 -\t Close the Program")
+        print("1 -\tPer Year")
+        print("2 -\tPer Country")
+        print("3 -\tPer Country and year")
+        print("4 -\t Where GDP per capita is bigger then 18577(Portugal in 2012)- By Sex")
+        print("5 -\t The coundries that have less and more suicides...")
+        while True:
+            option = int(input("\tEnter your option:\n"))
+            if option in range(6):
+                break
+        if option == 1:
+            year = input("\tEnter the year that you wanna search:\n")
+            presentResult(server.orderByYear(year), f"suicides_per_year_{year}")
+        elif option == 2:
+            country = input("\tEnter the cuntry that you wanna search:\n")
+            presentResult(server.orderByCountry(country), f"suicides_per_country_{country}")
+        elif option == 3:
+            year = input("\tEnter the year that you wanna search:\n")
+            country = input("\tEnter the cuntry that you wanna search\n")
+            presentResult(server.orderByYarAndCountry(year, country), f"suicides_per_country_{country}_year_{year}")
+        elif option == 4:
+            presentSimpleResult(server.suicidesInRichCountry())
+        elif option == 5:
+            res = server.yearWithLessandMoreSuicides()
+            presentCountriesLessMoreSuicides(res)
+        elif option == 0:
+            exit(0)
 
 
 
 
 def presentResult(res,type):
-    for data in res[0]:
-        print(f"SEX: {data[0]} AND NO: {data[1]}")
-    print("CHILDRENS")
-    for c in res[2]:
-        print(f"{c[0]}")
-    print("Olders")
-    for o in res[3]:
-        print(f"{o[0]}")
-    with open(f"{type}.xml", "w") as f:
-        f.write("<DATA>\n")
-    for d in res[1]:
-        with open(f"{type}.xml", "a") as handle:
-            handle.write(f"{d[0]}\n")
-    with open(f"{type}.xml", "a") as file:
-        file.write("</DATA>")
+    if not len(res) == 0:
+        for data in res[0]:
+            print(f"SEX: {data[0]} AND NO: {data[1]}")
+        print("CHILDRENS")
+        for c in res[2]:
+            print(f"{c[0]}")
+        print("Olders")
+        for o in res[3]:
+            print(f"{o[0]}")
+        with open(f"{type}.xml", "w") as f:
+            f.write(f"<{type}>\n")
+        for d in res[1]:
+            with open(f"{type}.xml", "a") as handle:
+                handle.write(f"{d[0]}\n")
+        with open(f"{type}.xml", "a") as file:
+            file.write(f"</{type}>")
+    else:
+        print("The database is not working or not have data or you dont have a valid values")
     return
 def presentSimpleResult(res):
-    for dt in res:
-        print(dt[0])
+    if not len(res) == 0:
+        for dt in res:
+            print(f"SEX: {dt[0]} NUMBER OF SUICIDES: {dt[1]}")
+    else:
+        print("The database is not working or not have data")
     return
+
+def presentCountriesLessMoreSuicides(res):
+
+    print(f"The country with more suicides is {res[0][0]} With {res[0][1]} suicides")
+    print(f"The country with less suicides is {res[1][0]} With {res[1][1]} suicides")
+    print("\n\n\n")
+    print("\tPRESENTING THE DATA OF THIS COUNTRIES")
+    print("\tThe Country with more suicides")
+    presentResult(server.orderByCountry(res[0][0]),f"suicides_per_country_{res[0][0]}".replace(" ","_"))
+    print("\tThe Country with les suicides")
+    presentResult(server.orderByCountry(res[1][0]),f"suicides_per_country_{res[0][0]}".replace(" ","_"))
+
+
 
 
 
@@ -162,6 +191,7 @@ with open("suicides.xml", "rb") as handle:
     resp = server.receive_file(binary_data)
 print(resp)
 menu()
+
 
 
 

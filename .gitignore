@@ -51,3 +51,7 @@ Thumbs.db
 /venv/
 /src/rpc-server/suicides.xml
 /src/rpc-client/suicides.xml
+/src/rpc-client/suicides_per_country_Portugal.xml
+/src/rpc-client/suicides_per_country_Portugal_year_2000.xml
+/src/rpc-client/suicides_per_year_2000.xml
+/src/rpc-client/suicides_per_country_Republic_of_Korea.xml
