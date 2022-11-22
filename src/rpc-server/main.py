@@ -79,11 +79,11 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
            cursor = connection.cursor()
            print(year)
            cursor.execute(
-               f"with suicides as ( "
-               f"select unnest ( xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE', xml)) "
-               f"as suicide from imported_documents where file_name='suicides2.xml') "
-               f"SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) "
-               f"as count FROM suicides GROUP BY (xpath('@sex', suicide))[1]::text")
+               f"with suicides as (select unnest(xpath('//SUICIDES/YEAR[@code=\"{year}\"/COUNTRY/SUICIDE', xml)) "
+               f"as suicide from imported_documents where file_name = 'suicides2.xml') "
+               f"SELECT ((xpath('@sex', suicide))[1]::varchar) as sex, "
+               f"sum((xpath('@suicides_no',suicide))[1]::varchar::numeric) "
+               f"FROM suicides GROUP BY (xpath('@sex', suicide))[1]::varchar")
            for ns in cursor:
                nSuicides.append(ns)
            cursor.close()
@@ -96,24 +96,21 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
                data.append(dt)
            cursor.close()
            cursor = connection.cursor()
-           cursor.execute(f"with suicides as ( "
-                          f"select unnest( "
-                          f"xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE[@minAge < 15]',xml) "
-                          f") as suicide "
-                          f"from imported_documents where file_name='suicides2.xml' "
-                          f")SELECT COUNT(*) as count "
-                          f"FROM suicides ")
+           cursor.execute(f"with suicides as ("
+                          f"select unnest(xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE[@minAge < 15]', xml)) "
+                          f"as suicide from imported_documents where file_name = 'suicides2.xml') "
+                          f"SELECT sum((xpath('@suicides_no',suicide))[1]::varchar::numeric) "
+                          f"FROM suicides")
            for c in cursor:
                children.append(c)
            cursor.close()
            cursor = connection.cursor()
-           cursor.execute(f"with suicides as ( "
-                          f"select unnest( "
-                          f"xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE[@minAge = \"MAX\"]',xml) "
-                          f") as suicide "
-                          f"from imported_documents where file_name='suicides2.xml' "
-                          f")SELECT COUNT(*) as count "
-                          f"FROM suicides ")
+           cursor.execute(f"with suicides as ("
+                          f"select unnest(xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE[@maxAge =\"MAX\"]', xml)) "
+                          f"as suicide "
+                          f"from imported_documents where file_name = 'suicides2.xml') "
+                          f"SELECT sum((xpath('@suicides_no',suicide))[1]::varchar::numeric) "
+                          f"FROM suicides")
            for o in cursor:
                olders.append(o)
        except (Exception, psycopg2.Error) as error:
@@ -124,7 +121,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
                connection.close()
        return [nSuicides,data,children,olders]
 
-
+##alterar
    def orderByCountry(country):
        nSuicides = []
        data = []
@@ -139,11 +136,11 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
 
            cursor = connection.cursor()
            cursor.execute(
-               f"with suicides as ( "
-               f"select unnest ( xpath('//SUICIDES/YEAR/COUNTRY[@name=\"{country}\"]/SUICIDE', xml)) "
-               f"as suicide from imported_documents where file_name='suicides2.xml') "
-               f"SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) "
-               f"as count FROM suicides GROUP BY (xpath('@sex', suicide))[1]::text")
+               f"with suicides as (select unnest(xpath('//SUICIDES/YEAR/COUNTRY[@name=\"{country}\"/SUICIDE', xml)) "
+               f"as suicide from imported_documents where file_name = 'suicides2.xml') "
+               f"SELECT ((xpath('@sex', suicide))[1]::varchar) as sex, "
+               f"sum((xpath('@suicides_no',suicide))[1]::varchar::numeric) "
+               f"FROM suicides GROUP BY (xpath('@sex', suicide))[1]::varchar")
            for ns in cursor:
                nSuicides.append(ns)
            cursor.close()
@@ -156,13 +153,11 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
                data.append(dt)
            cursor.close()
            cursor = connection.cursor()
-           cursor.execute(f"with suicides as ( "
-                          f"select unnest( "
-                          f"xpath('//SUICIDES/YEAR/COUNTRY[@name=\"{country}\"]/SUICIDE[@minAge < 15]',xml) "
-                          f") as suicide "
-                          f"from imported_documents where file_name='suicides2.xml' "
-                          f")SELECT COUNT(*) as count "
-                          f"FROM suicides ")
+           cursor.execute(f"with suicides as ("
+                          f"select unnest(xpath('//SUICIDES/YEAR/COUNTRY[@name=\"{country}\"/SUICIDE[@minAge < 15]', xml)) "
+                          f"as suicide from imported_documents where file_name = 'suicides2.xml') "
+                          f"SELECT sum((xpath('@suicides_no',suicide))[1]::varchar::numeric) "
+                          f"FROM suicides")
            for c in cursor:
                children.append(c)
            cursor.close()
@@ -254,10 +249,11 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
                                          database="is")
 
            cursor = connection.cursor()
-           cursor.execute(f"with suicides as (select unnest( xpath ('//SUICIDES/YEAR/COUNTRY/SUICIDE[@gdp_per_capita >18577]',xml) "
-                          f") as suicide from imported_documents where file_name='suicides2.xml' ) "
-                          f"SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) as count FROM suicides "
-                          f"GROUP BY (xpath('@sex', suicide))[1]::text")
+           cursor.execute(f"with suicides as (select unnest(xpath('//SUICIDES/YEAR/COUNTRY/SUICIDE[@gdp_per_capita >18577]', xml)) "
+                          f"as suicide from imported_documents where file_name = 'suicides2.xml') "
+                          f"SELECT ((xpath('@sex', suicide))[1]::varchar) as sex, "
+                          f"sum((xpath('@suicides_no',suicide))[1]::varchar::numeric) "
+                          f"FROM suicides GROUP BY (xpath('@sex', suicide))[1]::varchar")
            for d in cursor:
                res.append(d)
        except (Exception, psycopg2.Error) as error:
@@ -268,6 +264,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
                connection.close()
        return res
 
+##colocar queries
    def yearWithLessSuicides():
        return
    #####
