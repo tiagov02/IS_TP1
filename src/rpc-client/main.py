@@ -101,6 +101,7 @@ def writeXML(dataset:pd):
 
 
 def menu():
+    valid: bool = False
     while True:
         print("##############SYSTEMS INTEGRATION##################")
         print("########José Viana, Luís Malheiro@ESTG-IPVC########")
@@ -111,7 +112,10 @@ def menu():
         print("4 -\t Where GDP per capita is bigger then 18577(Portugal in 2012)- By Sex")
         print("5 -\t The coundries that have less and more suicides...")
         while True:
-            option = int(input("\tEnter your option:\n"))
+            try:
+                option = int(input("\tEnter your option:\n"))
+            except(Exception):
+                option = int(input("\tEnter your option:\n"))
             if option in range(6):
                 break
         if option == 1:
