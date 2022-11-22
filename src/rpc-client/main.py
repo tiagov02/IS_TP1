@@ -106,25 +106,35 @@ def menu():
     print("##############SYSTEMS INTEGRATION##################")
     print("########José Viana, Luís Malheiro@ESTG-IPVC########")
     print("1 -\tPer Year")
-    print("2 -\tPer Country and year")
-    print("3 -\tWhere GDP per capita is bigger then 18577(Portugal in 2012)")
-    print("4 -\t In Children(Age less then 15)")
+    print("2 -\tPer Country")
+    print("3 -\tPer Country and year")
+    print("4 -\t Where GDP per capita is bigger then 18577(Portugal in 2012)- By Sex")
     print("6 -\t In Olders(Age bigger then 75)")
     option = input("\tEnter your option")
     if option == '1':
         year = input("\tEnter the year that you wanna search")
         presentResult(server.orderByYear(year))
-    else:
-        if option == '2':
-            year = input("\tEnter the year that you wanna search")
-            country = input("\tEnter the cuntry that you wanna search")
-        else:
-            return
+    elif option =='2':
+        country = input("\tEnter the cuntry that you wanna search")
+        presentResult(server.orderByCountry(country))
+    elif option =='3':
+        year = input("\tEnter the year that you wanna search")
+        country = input("\tEnter the cuntry that you wanna search")
+        presentResult(server.orderByYarAndCountry(year,country))
+
 
 
 def presentResult(res):
-    for data in res:
+    for data in res[0]:
         print(f"SEX: {data[0]} AND NO: {data[1]}")
+    print("CHILDRENS")
+    for c in res[2]:
+        print(f"{c[0]}")
+    print("Olders")
+    for o in res[3]:
+        print(f"{o[0]}")
+    for d in res[1]:
+        print(d[0])
 
 
 

@@ -263,6 +263,8 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    server.register_function(string_length)
    server.register_function(receive_file)
    server.register_function(orderByYear)
+   server.register_function(orderByCountry)
+   server.register_function(orderByYarAndCountry)
 
    # start the server
    print("Starting the RPC Server...")
