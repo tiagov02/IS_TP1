@@ -132,7 +132,7 @@ def menu():
             res = server.yearWithLessandMoreSuicides()
             presentCountriesLessMoreSuicides(res)
         elif option == 0:
-            exit(0)
+            break
 
 
 
