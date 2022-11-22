@@ -51,8 +51,6 @@ def readDataset():
 
 def writeXML(dataset:pd):
     root = ET.Element('SUICIDES')
-    aux = None
-    suicides = None
     i = 1
     coordinates = []
     find_country: bool = False
