@@ -243,8 +243,31 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
                connection.close()
        return [nSuicides, data, children, olders]
 
-   def yearWithMoreSuicides():
-       return
+
+   def suicidesInRichCountry():
+       res = []
+       try:
+           connection = psycopg2.connect(user="is",
+                                         password="is",
+                                         host="localhost",
+                                         port="5432",
+                                         database="is")
+
+           cursor = connection.cursor()
+           cursor.execute(f"with suicides as (select unnest( xpath ('//SUICIDES/YEAR/COUNTRY/SUICIDE[@gdp_per_capita >18577]',xml) "
+                          f") as suicide from imported_documents where file_name='suicides2.xml' ) "
+                          f"SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) as count FROM suicides "
+                          f"GROUP BY (xpath('@sex', suicide))[1]::text")
+           for d in cursor:
+               res.append(d)
+       except (Exception, psycopg2.Error) as error:
+           print("Failed to fetch data", error)
+       finally:
+           if connection:
+               cursor.close()
+               connection.close()
+       return res
+
    def yearWithLessSuicides():
        return
    #####
@@ -265,6 +288,7 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
    server.register_function(orderByYear)
    server.register_function(orderByCountry)
    server.register_function(orderByYarAndCountry)
+   server.register_function(suicidesInRichCountry)
 
    # start the server
    print("Starting the RPC Server...")

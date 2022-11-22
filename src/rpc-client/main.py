@@ -109,22 +109,25 @@ def menu():
     print("2 -\tPer Country")
     print("3 -\tPer Country and year")
     print("4 -\t Where GDP per capita is bigger then 18577(Portugal in 2012)- By Sex")
-    print("6 -\t In Olders(Age bigger then 75)")
-    option = input("\tEnter your option")
+    print("5 -\t Defining...")
+    option = input("\tEnter your option:\n")
     if option == '1':
-        year = input("\tEnter the year that you wanna search")
-        presentResult(server.orderByYear(year))
+        year = input("\tEnter the year that you wanna search:\n")
+        presentResult(server.orderByYear(year),f"suicides_per_year_{year}")
     elif option =='2':
-        country = input("\tEnter the cuntry that you wanna search")
-        presentResult(server.orderByCountry(country))
+        country = input("\tEnter the cuntry that you wanna search:\n")
+        presentResult(server.orderByCountry(country),f"suicides_per_country_{country}")
     elif option =='3':
-        year = input("\tEnter the year that you wanna search")
-        country = input("\tEnter the cuntry that you wanna search")
-        presentResult(server.orderByYarAndCountry(year,country))
+        year = input("\tEnter the year that you wanna search:\n")
+        country = input("\tEnter the cuntry that you wanna search\n")
+        presentResult(server.orderByYarAndCountry(year,country),f"suicides_per_country_{country}_year_{year}")
+    elif option == '4':
+        presentSimpleResult(server.suicidesInRichCountry())
 
 
 
-def presentResult(res):
+
+def presentResult(res,type):
     for data in res[0]:
         print(f"SEX: {data[0]} AND NO: {data[1]}")
     print("CHILDRENS")
@@ -133,8 +136,18 @@ def presentResult(res):
     print("Olders")
     for o in res[3]:
         print(f"{o[0]}")
+    with open(f"{type}.xml", "w") as f:
+        f.write("<DATA>\n")
     for d in res[1]:
-        print(d[0])
+        with open(f"{type}.xml", "a") as handle:
+            handle.write(f"{d[0]}\n")
+    with open(f"{type}.xml", "a") as file:
+        file.write("</DATA>")
+    return
+def presentSimpleResult(res):
+    for dt in res:
+        print(dt[0])
+    return
 
 
 
