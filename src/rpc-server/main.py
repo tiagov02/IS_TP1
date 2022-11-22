@@ -65,7 +65,10 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
 
    # XPATH AND XQUERY
    def orderByYear(year):
-       res = []
+       nSuicides = []
+       data = []
+       children = []
+       olders = []
        try:
            connection = psycopg2.connect(user="is",
                                          password="is",
@@ -76,40 +79,174 @@ with SimpleXMLRPCServer(('localhost', 9000), requestHandler=RequestHandler) as s
            cursor = connection.cursor()
            print(year)
            cursor.execute(
-               f"with suicides as ( select unnest ( xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE', xml)) as suicide from imported_documents where file_name='suicides2.xml') SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) as count FROM suicides GROUP BY (xpath('@sex', suicide))[1]::text")
-           for data in cursor:
-               res.append(data)
+               f"with suicides as ( "
+               f"select unnest ( xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE', xml)) "
+               f"as suicide from imported_documents where file_name='suicides2.xml') "
+               f"SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) "
+               f"as count FROM suicides GROUP BY (xpath('@sex', suicide))[1]::text")
+           for ns in cursor:
+               nSuicides.append(ns)
+           cursor.close()
+           cursor = connection.cursor()
+           cursor.execute(f"select unnest( "
+                          f"xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE',xml) "
+                          f" ) as suicide "
+                          f"from imported_documents where file_name='suicides2.xml'")
+           for dt in cursor:
+               data.append(dt)
+           cursor.close()
+           cursor = connection.cursor()
+           cursor.execute(f"with suicides as ( "
+                          f"select unnest( "
+                          f"xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE[@minAge < 15]',xml) "
+                          f") as suicide "
+                          f"from imported_documents where file_name='suicides2.xml' "
+                          f")SELECT COUNT(*) as count "
+                          f"FROM suicides ")
+           for c in cursor:
+               children.append(c)
+           cursor.close()
+           cursor = connection.cursor()
+           cursor.execute(f"with suicides as ( "
+                          f"select unnest( "
+                          f"xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY/SUICIDE[@minAge = \"MAX\"]',xml) "
+                          f") as suicide "
+                          f"from imported_documents where file_name='suicides2.xml' "
+                          f")SELECT COUNT(*) as count "
+                          f"FROM suicides ")
+           for o in cursor:
+               olders.append(o)
        except (Exception, psycopg2.Error) as error:
            print("Failed to fetch data", error)
        finally:
            if connection:
                cursor.close()
                connection.close()
-           return res
+       return [nSuicides,data,children,olders]
 
-   def orderByCountryAndYear(year:str,country:str):
-      try:
-         connection = psycopg2.connect(user="is",
-                                       password="is",
-                                       host="localhost",
-                                       port="5432",
-                                       database="is")
 
-         cursor = connection.cursor()
-         cursor.execute("SELECT xpath(/suicides/year/country[name='"+country+"']/suicides/text(),xml) from imported_documents")
-         for sdata in cursor:
-            print(sdata)
-      except (Exception, psycopg2.Error) as error:
-         print("Failed to fetch data", error)
-      finally:
-         if connection:
-            cursor.close()
-            connection.close()
+   def orderByCountry(country):
+       nSuicides = []
+       data = []
+       children = []
+       olders = []
+       try:
+           connection = psycopg2.connect(user="is",
+                                         password="is",
+                                         host="localhost",
+                                         port="5432",
+                                         database="is")
 
-   def childrensWhoCommitedSuicide():
-      return
-   def oldersWhoCommitedSuicide():
-      return
+           cursor = connection.cursor()
+           cursor.execute(
+               f"with suicides as ( "
+               f"select unnest ( xpath('//SUICIDES/YEAR/COUNTRY[@name=\"{country}\"]/SUICIDE', xml)) "
+               f"as suicide from imported_documents where file_name='suicides2.xml') "
+               f"SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) "
+               f"as count FROM suicides GROUP BY (xpath('@sex', suicide))[1]::text")
+           for ns in cursor:
+               nSuicides.append(ns)
+           cursor.close()
+           cursor = connection.cursor()
+           cursor.execute(f"select unnest( "
+                          f"xpath('//SUICIDES/YEAR/COUNTRY[@name=\"{country}\"]/SUICIDE',xml) "
+                          f" ) as suicide "
+                          f"from imported_documents where file_name='suicides2.xml'")
+           for dt in cursor:
+               data.append(dt)
+           cursor.close()
+           cursor = connection.cursor()
+           cursor.execute(f"with suicides as ( "
+                          f"select unnest( "
+                          f"xpath('//SUICIDES/YEAR/COUNTRY[@name=\"{country}\"]/SUICIDE[@minAge < 15]',xml) "
+                          f") as suicide "
+                          f"from imported_documents where file_name='suicides2.xml' "
+                          f")SELECT COUNT(*) as count "
+                          f"FROM suicides ")
+           for c in cursor:
+               children.append(c)
+           cursor.close()
+           cursor = connection.cursor()
+           cursor.execute(f"with suicides as ( "
+                          f"select unnest( "
+                          f"xpath('//SUICIDES/YEAR/COUNTRY[@name=\"{country}\"]/SUICIDE[@minAge = \"MAX\"]',xml) "
+                          f") as suicide "
+                          f"from imported_documents where file_name='suicides2.xml' "
+                          f")SELECT COUNT(*) as count "
+                          f"FROM suicides ")
+           for o in cursor:
+               olders.append(o)
+       except (Exception, psycopg2.Error) as error:
+           print("Failed to fetch data", error)
+       finally:
+           if connection:
+               cursor.close()
+               connection.close()
+       return [nSuicides, data, children, olders]
+
+   def orderByYarAndCountry(year,country):
+       nSuicides = []
+       data = []
+       children = []
+       olders = []
+       try:
+           connection = psycopg2.connect(user="is",
+                                         password="is",
+                                         host="localhost",
+                                         port="5432",
+                                         database="is")
+
+           cursor = connection.cursor()
+           cursor.execute(
+               f"with suicides as ( "
+               f"select unnest ( xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY[@name=\"{country}\"]/SUICIDE', xml)) "
+               f"as suicide from imported_documents where file_name='suicides2.xml') "
+               f"SELECT (xpath('@sex', suicide))[1]::text as sex, COUNT(*) "
+               f"as count FROM suicides GROUP BY (xpath('@sex', suicide))[1]::text")
+           for ns in cursor:
+               nSuicides.append(ns)
+           cursor.close()
+           cursor = connection.cursor()
+           cursor.execute(f"select unnest( "
+                          f"xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY[@name=\"{country}\"]/SUICIDE',xml) "
+                          f" ) as suicide "
+                          f"from imported_documents where file_name='suicides2.xml'")
+           for dt in cursor:
+               data.append(dt)
+           cursor.close()
+           cursor = connection.cursor()
+           cursor.execute(f"with suicides as ( "
+                          f"select unnest( "
+                          f"xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY[@name=\"{country}\"]/SUICIDE[@minAge < 15]',xml) "
+                          f") as suicide "
+                          f"from imported_documents where file_name='suicides2.xml' "
+                          f")SELECT COUNT(*) as count "
+                          f"FROM suicides ")
+           for c in cursor:
+               children.append(c)
+           cursor.close()
+           cursor = connection.cursor()
+           cursor.execute(f"with suicides as ( "
+                          f"select unnest( "
+                          f"xpath('//SUICIDES/YEAR[@code=\"{year}\"]/COUNTRY[@name=\"{country}\"]/SUICIDE[@minAge = \"MAX\"]',xml) "
+                          f") as suicide "
+                          f"from imported_documents where file_name='suicides2.xml' "
+                          f")SELECT COUNT(*) as count "
+                          f"FROM suicides ")
+           for o in cursor:
+               olders.append(o)
+       except (Exception, psycopg2.Error) as error:
+           print("Failed to fetch data", error)
+       finally:
+           if connection:
+               cursor.close()
+               connection.close()
+       return [nSuicides, data, children, olders]
+
+   def yearWithMoreSuicides():
+       return
+   def yearWithLessSuicides():
+       return
    #####
 
 
